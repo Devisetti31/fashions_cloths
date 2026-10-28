@@ -4,9 +4,11 @@ import { ArrowLeft, ChevronRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
 import { PRODUCTS, CATEGORIES } from '../data/products';
+import { useShop } from '../context/ShopContext';
 import './ShopPage.css';
 
 export default function CategoryPage() {
+  const { products } = useShop();
   const { category } = useParams();
   const [quickViewProduct, setQuickViewProduct] = useState(null);
 
@@ -33,7 +35,8 @@ export default function CategoryPage() {
     );
   }
 
-  const categoryProducts = PRODUCTS.filter((p) => {
+  const sourceProducts = products && products.length > 0 ? products : PRODUCTS;
+  const categoryProducts = sourceProducts.filter((p) => {
     if (categoryMeta.slug === 'new-arrivals') {
       return p.isNew;
     }

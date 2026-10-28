@@ -248,6 +248,23 @@ def update_product(
             continue
         setattr(product, field, value)
 
+    if payload.primary_image:
+        found_primary = False
+        for img in product.images:
+            if img.is_primary or img.display_order == 0:
+                img.image_url = payload.primary_image
+                found_primary = True
+                break
+        if not found_primary:
+            new_img = ProductImage(
+                product_id=product.id,
+                image_url=payload.primary_image,
+                alt_text=f"{product.name} photo",
+                display_order=0,
+                is_primary=True,
+            )
+            db.add(new_img)
+
     db.commit()
     db.refresh(product)
     return ProductDetailResponse.model_validate(product)

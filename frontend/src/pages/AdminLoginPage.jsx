@@ -18,14 +18,17 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError('');
 
-    if (!email.trim() || !password) {
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+
+    if (!cleanEmail || !cleanPassword) {
       setError('Please provide administrator credentials.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const user = await login(email.trim(), password);
+      const user = await login(cleanEmail, cleanPassword);
 
       // Verify server-side administrator role
       if (!user.is_admin) {

@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { PRODUCTS, CATEGORIES } from '../data/products';
+import { adaptApiProduct } from '../services/productService';
 
 const ShopContext = createContext(null);
 
@@ -6,6 +8,44 @@ const CART_STORAGE_KEY = 'es_ethnic_styles_cart';
 const WISHLIST_STORAGE_KEY = 'es_ethnic_styles_wishlist';
 
 export function ShopProvider({ children }) {
+  const [products, setProducts] = useState(PRODUCTS);
+
+  const refreshProducts = useCallback(async () => {
+    try {
+      const res = await fetch('/api/v1/products?page=1&page_size=100', {
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && Array.isArray(data.items) && data.items.length > 0) {
+        const apiProducts = data.items.map(adaptApiProduct).filter(Boolean);
+        // Merge apiProducts with static PRODUCTS so updated price & primary_image always reflect
+        const merged = PRODUCTS.map((staticProd) => {
+          const apiMatch = apiProducts.find(
+            (ap) =>
+              ap.sku === staticProd.sku ||
+              ap.slug === staticProd.slug ||
+              ap.name.toLowerCase() === staticProd.name.toLowerCase()
+          );
+          return apiMatch ? { ...staticProd, ...apiMatch } : staticProd;
+        });
+        // Also include any newly created products added via Admin that are not in PRODUCTS
+        const newApiOnly = apiProducts.filter(
+          (ap) =>
+            !PRODUCTS.some(
+              (sp) => sp.sku === ap.sku || sp.slug === ap.slug || sp.name.toLowerCase() === ap.name.toLowerCase()
+            )
+        );
+        setProducts([...merged, ...newApiOnly]);
+      }
+    } catch {
+      // Offline fallback: keep static PRODUCTS
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshProducts();
+  }, [refreshProducts]);
   // Cart state initialization with local storage recovery
   const [cart, setCart] = useState(() => {
     try {
@@ -138,18 +178,24 @@ export function ShopProvider({ children }) {
   };
 
   // Derived counts and totals
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const cartSubtotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  const cartCount = cart.reduce((total, item) => total + (Number(item.quantity) || 1), 0);
+  const cartSubtotal = cart.reduce((total, item) => {
+    const rawPrice = item.price ?? item.product?.price ?? 0;
+    const numPrice = Number(rawPrice) || 0;
+    const qty = Number(item.quantity) || 1;
+    return total + (numPrice * qty);
+  }, 0);
   const wishlistCount = wishlist.length;
 
   // INR currency formatter
   const formatPrice = (amount) => {
-    if (amount == null) return '₹0';
+    const num = Number(amount);
+    if (amount == null || isNaN(num)) return '₹0';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(num);
   };
 
   const value = {
@@ -170,6 +216,8 @@ export function ShopProvider({ children }) {
     formatPrice,
     toastMessage,
     showToast,
+    products,
+    refreshProducts,
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

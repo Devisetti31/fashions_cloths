@@ -21,14 +21,17 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (!email.trim() || !password) {
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+
+    if (!cleanEmail || !cleanPassword) {
       setError('Please provide both your email address and password.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await login(email.trim(), password);
+      await login(cleanEmail, cleanPassword);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Invalid email or password. Please try again.');

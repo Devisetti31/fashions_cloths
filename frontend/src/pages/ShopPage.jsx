@@ -4,9 +4,11 @@ import { Search, SlidersHorizontal, RotateCcw, PackageOpen } from 'lucide-react'
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
 import { PRODUCTS, CATEGORIES } from '../data/products';
+import { useShop } from '../context/ShopContext';
 import './ShopPage.css';
 
 export default function ShopPage() {
+  const { products } = useShop();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const urlSearch = searchParams.get('search') || '';
@@ -58,7 +60,8 @@ export default function ShopPage() {
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let list = [...PRODUCTS];
+    const sourceProducts = products && products.length > 0 ? products : PRODUCTS;
+    let list = [...sourceProducts];
 
     // Category filter
     if (selectedCategory !== 'all') {
@@ -102,7 +105,7 @@ export default function ShopPage() {
     }
 
     return list;
-  }, [searchTerm, selectedCategory, sortBy]);
+  }, [searchTerm, selectedCategory, sortBy, products]);
 
   const hasActiveFilters = Boolean(searchTerm.trim() || selectedCategory !== 'all' || sortBy !== 'featured');
 

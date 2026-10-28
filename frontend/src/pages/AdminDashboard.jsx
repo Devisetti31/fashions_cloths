@@ -17,6 +17,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useShop } from '../context/ShopContext';
 import {
   fetchAdminMetrics,
   fetchAdminOrders,
@@ -30,6 +31,7 @@ import './Admin.css';
 
 export default function AdminDashboard({ defaultTab }) {
   const { user, logout } = useAuth();
+  const { refreshProducts } = useShop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -180,6 +182,9 @@ export default function AdminDashboard({ defaultTab }) {
 
       setIsProductModalOpen(false);
       await loadData();
+      if (refreshProducts) {
+        await refreshProducts();
+      }
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
       setErrorMsg(err.message || 'Failed to save product.');
@@ -194,6 +199,9 @@ export default function AdminDashboard({ defaultTab }) {
       await deleteAdminProduct(prodId);
       setSuccessMsg(`Product '${prodName}' deactivated.`);
       await loadData();
+      if (refreshProducts) {
+        await refreshProducts();
+      }
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
       setErrorMsg(err.message || 'Failed to deactivate product.');

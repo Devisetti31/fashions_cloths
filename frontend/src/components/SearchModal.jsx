@@ -9,7 +9,7 @@ export default function SearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
   const inputRef = useRef(null);
   const navigate = useNavigate();
-  const { formatPrice } = useShop();
+  const { formatPrice, products } = useShop();
 
   const quickTags = ['Banarasi', 'Kanjeevaram', 'Lehenga', 'Chikankari', 'Velvet', 'Silk'];
 
@@ -24,13 +24,14 @@ export default function SearchModal({ isOpen, onClose }) {
   const matches = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.trim().toLowerCase();
-    return PRODUCTS.filter(
+    const sourceProducts = products && products.length > 0 ? products : PRODUCTS;
+    return sourceProducts.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.categoryLabel.toLowerCase().includes(q) ||
         p.fabric.toLowerCase().includes(q)
     ).slice(0, 5);
-  }, [query]);
+  }, [query, products]);
 
   if (!isOpen) return null;
 

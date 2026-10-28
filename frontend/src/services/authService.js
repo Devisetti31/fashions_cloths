@@ -40,20 +40,30 @@ export async function registerCustomer(data) {
  * Authenticate customer or administrator
  */
 export async function loginUser(email, password) {
-  const response = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
+  try {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const resData = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(resData.detail || 'Invalid email or password.');
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      if (response.status >= 500) {
+        throw new Error(`Backend server unavailable (HTTP ${response.status}). Please make sure FastAPI is running on port 8000.`);
+      }
+      throw new Error(resData.detail || 'Invalid email or password.');
+    }
+    return resData;
+  } catch (err) {
+    if (err.message && err.message.includes('Failed to fetch')) {
+      throw new Error('Cannot connect to backend server. Please verify that FastAPI is running on port 8000.');
+    }
+    throw err;
   }
-  return resData;
 }
 
 /**

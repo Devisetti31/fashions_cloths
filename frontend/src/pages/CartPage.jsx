@@ -167,16 +167,24 @@ export default function CartPage() {
 
               <div className="cart-items-list">
                 {cart.map((item) => {
-                  const itemKey = `${item.id}-${item.selectedSize || 'default'}-${item.selectedColor || 'default'}`;
-                  const itemTotal = item.price * item.quantity;
+                  const itemKey = `${item.id}-${item.selectedSize || item.size || 'default'}-${item.selectedColor?.name || item.color?.name || item.selectedColor || 'default'}`;
+                  const rawPrice = item.price ?? item.product?.price ?? 0;
+                  const numPrice = Number(rawPrice) || 0;
+                  const itemQty = Math.max(1, Number(item.quantity) || 1);
+                  const itemTotal = numPrice * itemQty;
+                  const itemName = item.name || item.product?.name || 'Couture';
+                  const itemImage = item.primaryImage || item.image || item.product?.primary_image || item.product?.images?.[0] || '/images/logo.png';
+                  const itemCategory = item.categoryLabel || item.product?.categoryLabel || 'Couture';
+                  const itemSize = item.selectedSize || item.size;
+                  const itemColor = typeof item.selectedColor === 'object' ? item.selectedColor?.name : (item.selectedColor || (typeof item.color === 'object' ? item.color?.name : item.color));
 
                   return (
                     <div key={itemKey} className="cart-item-card">
                       <div className="cart-item-product">
-                        <Link to={`/product/${item.id}`} className="cart-item-img-link">
+                        <Link to={`/product/${item.product?.id || item.id}`} className="cart-item-img-link">
                           <img
-                            src={item.primaryImage || item.image}
-                            alt={item.name}
+                            src={itemImage}
+                            alt={itemName}
                             className="cart-item-img"
                             onError={(e) => {
                               e.target.src = '/images/logo.png';
@@ -184,15 +192,15 @@ export default function CartPage() {
                           />
                         </Link>
                         <div className="cart-item-details">
-                          <span className="cart-item-category">{item.categoryLabel || 'Couture'}</span>
-                          <Link to={`/product/${item.id}`} className="cart-item-name">
-                            {item.name}
+                          <span className="cart-item-category">{itemCategory}</span>
+                          <Link to={`/product/${item.product?.id || item.id}`} className="cart-item-name">
+                            {itemName}
                           </Link>
                           <div className="cart-item-variants">
-                            {item.selectedSize && <span>Size: {item.selectedSize}</span>}
-                            {item.selectedColor && <span>Color: {item.selectedColor}</span>}
+                            {itemSize && <span>Size: {itemSize}</span>}
+                            {itemColor && <span>Color: {itemColor}</span>}
                           </div>
-                          <div className="cart-item-unit-price">{formatPrice(item.price)}</div>
+                          <div className="cart-item-unit-price">{formatPrice(numPrice)}</div>
                         </div>
                       </div>
 
@@ -202,16 +210,16 @@ export default function CartPage() {
                             type="button"
                             className="qty-btn"
                             aria-label="Decrease quantity"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize, item.selectedColor)}
+                            onClick={() => updateQuantity(item.id, itemQty - 1, itemSize, itemColor)}
                           >
                             <Minus size={14} />
                           </button>
-                          <span className="qty-val">{item.quantity}</span>
+                          <span className="qty-val">{itemQty}</span>
                           <button
                             type="button"
                             className="qty-btn"
                             aria-label="Increase quantity"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize, item.selectedColor)}
+                            onClick={() => updateQuantity(item.id, itemQty + 1, itemSize, itemColor)}
                           >
                             <Plus size={14} />
                           </button>
@@ -220,8 +228,8 @@ export default function CartPage() {
                         <button
                           type="button"
                           className="cart-item-remove"
-                          onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
-                          aria-label={`Remove ${item.name} from bag`}
+                          onClick={() => removeFromCart(item.id, itemSize, itemColor)}
+                          aria-label={`Remove ${itemName} from bag`}
                         >
                           <Trash2 size={15} />
                           <span>Remove</span>

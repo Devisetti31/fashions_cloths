@@ -22,15 +22,16 @@ import './ProductDetailPage.css';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { addToCart, isInWishlist, toggleWishlist, formatPrice } = useShop();
+  const { addToCart, isInWishlist, toggleWishlist, formatPrice, products } = useShop();
 
-  const staticProduct = PRODUCTS.find(
-    (p) => p.id === id || p.slug === id || String(p.id) === String(id) || p.sku === id
+  const sourceProducts = products && products.length > 0 ? products : PRODUCTS;
+  const initialProduct = sourceProducts.find(
+    (p) => p.id === id || p.slug === id || String(p.id) === String(id) || String(p.dbId) === String(id) || p.sku === id
   );
   const [apiProduct, setApiProduct] = useState(null);
 
   useEffect(() => {
-    if (!staticProduct && id) {
+    if (id) {
       fetch(`/api/v1/products/${id}`)
         .then((res) => (res.ok ? res.json() : fetch(`/api/v1/products/slug/${id}`).then((r) => (r.ok ? r.json() : null))))
         .then((data) => {
@@ -38,9 +39,9 @@ export default function ProductDetailPage() {
         })
         .catch(() => {});
     }
-  }, [id, staticProduct]);
+  }, [id]);
 
-  const product = staticProduct || apiProduct;
+  const product = apiProduct || initialProduct;
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
@@ -87,7 +88,7 @@ export default function ProductDetailPage() {
   }
 
   const wishlisted = isInWishlist(product.id);
-  const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
+  const relatedProducts = sourceProducts.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
 
   const discountPercent =
     product.originalPrice && product.originalPrice > product.price

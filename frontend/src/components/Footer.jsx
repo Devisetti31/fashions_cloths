@@ -31,23 +31,24 @@ export default function Footer({ onOpenHealthModal }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: 'var(--radius-sm)',
-                  backgroundColor: 'var(--color-burgundy-soft)',
-                  border: '1px solid var(--color-antique-gold)',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  backgroundColor: 'transparent',
+                  border: '1.5px solid var(--color-antique-gold)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
                   flexShrink: 0,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
                 }}
               >
                 {!logoFailed ? (
                   <img
                     src="/images/logo.png"
                     alt="ES ETHNIC STYLES Official Logo"
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
                     onError={() => setLogoFailed(true)}
                   />
                 ) : (

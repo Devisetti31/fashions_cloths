@@ -8,14 +8,19 @@ import { PRODUCTS, CATEGORIES } from '../data/products';
 export function adaptApiProduct(item) {
   if (!item) return null;
 
-  // Extract images: prioritize images array if present, fallback to primary_image
-  const images = (item.images && item.images.length > 0)
+  // Extract gallery images
+  const galleryImages = (item.images && item.images.length > 0)
     ? item.images
         .slice()
         .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
         .map((img) => (typeof img === 'string' ? img : img.image_url))
         .filter(Boolean)
-    : [item.primary_image].filter(Boolean);
+    : [];
+
+  // Guarantee updated primary_image from admin takes topmost precedence as images[0]
+  const candidateImages = item.primary_image
+    ? [item.primary_image, ...galleryImages.filter((img) => img !== item.primary_image)]
+    : galleryImages;
 
   // Extract sizes from variants
   const sizes = (item.variants && item.variants.length > 0)
@@ -44,13 +49,15 @@ export function adaptApiProduct(item) {
     ? (typeof item.compare_at_price === 'string' ? parseFloat(item.compare_at_price) : Number(item.compare_at_price))
     : null;
 
-  // Match with static product by SKU or name if available to maintain image galleries & reviews
+  // Match with static product by SKU, slug, or name if available
   const matchedStatic = PRODUCTS.find(
-    (p) => (item.sku && p.sku === item.sku) || (item.name && p.name.toLowerCase() === item.name.toLowerCase())
+    (p) => (item.sku && p.sku === item.sku) || (item.slug && p.slug === item.slug) || (item.name && p.name.toLowerCase() === item.name.toLowerCase())
   );
 
   const finalId = matchedStatic ? matchedStatic.id : (item.slug || String(item.id));
-  const finalImages = images.length > 0 ? images : (matchedStatic ? matchedStatic.images : ['/images/placeholder.jpg']);
+  const finalImages = candidateImages.length > 0
+    ? candidateImages
+    : (item.primary_image ? [item.primary_image] : (matchedStatic ? matchedStatic.images : ['/images/placeholder.jpg']));
 
   return {
     id: finalId,
@@ -63,11 +70,11 @@ export function adaptApiProduct(item) {
     price: parsedPrice,
     originalPrice: parsedComparePrice || matchedStatic?.originalPrice || null,
     isSale: Boolean(parsedComparePrice && parsedComparePrice > parsedPrice),
-    isNew: true,
+    isNew: matchedStatic ? matchedStatic.isNew : true,
     isFeatured: Boolean(item.is_featured),
     rating: item.rating || matchedStatic?.rating || 4.9,
     reviewsCount: item.reviewsCount || matchedStatic?.reviewsCount || 18,
-    description: item.description,
+    description: item.description || matchedStatic?.description,
     fabric: item.fabric || matchedStatic?.fabric || 'Pure Silk Handloom',
     craft: item.craft || matchedStatic?.craft || 'Artisanal Handloom Craft',
     sizes: sizes.length > 0 ? sizes : (matchedStatic?.sizes || ['Free Size']),

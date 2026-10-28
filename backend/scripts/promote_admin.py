@@ -33,12 +33,15 @@ def promote_user(email: str, create: bool = False, name: str = None, password: s
         user = db.scalar(select(User).where(User.email == clean_email))
 
         if user:
-            if user.is_admin:
-                print(f"[OK] User '{clean_email}' already has administrator privileges.")
-                return True
             user.is_admin = True
+            if password:
+                if len(password) < 8:
+                    print("[ERROR] Password must be at least 8 characters long.")
+                    return False
+                user.hashed_password = get_password_hash(password)
+                print(f"[SUCCESS] Updated password for '{clean_email}'.")
             db.commit()
-            print(f"[SUCCESS] Granted administrator privileges to existing user: '{user.full_name}' ({clean_email})")
+            print(f"[SUCCESS] Administrator privileges confirmed for: '{user.full_name}' ({clean_email})")
             return True
 
         if not create:

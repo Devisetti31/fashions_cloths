@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import ProductCard from './ProductCard';
 import { PRODUCTS } from '../data/products';
+import { useShop } from '../context/ShopContext';
 import './FeaturedProducts.css';
 
 export default function FeaturedProducts({ onQuickView }) {
+  const { products } = useShop();
   const [activeTab, setActiveTab] = useState('all');
 
   const tabs = [
@@ -17,12 +19,13 @@ export default function FeaturedProducts({ onQuickView }) {
   ];
 
   const filteredProducts = useMemo(() => {
-    let list = PRODUCTS.filter((p) => p.isFeatured);
+    const sourceProducts = products && products.length > 0 ? products : PRODUCTS;
+    let list = sourceProducts.filter((p) => p.isFeatured);
     if (activeTab !== 'all') {
       list = list.filter((p) => p.category === activeTab);
     }
     return list.slice(0, 8);
-  }, [activeTab]);
+  }, [activeTab, products]);
 
   return (
     <section className="featured-section" aria-labelledby="featured-title">
