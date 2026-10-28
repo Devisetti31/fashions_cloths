@@ -1,0 +1,102 @@
+.brand-story-section {
+  padding: 6rem var(--spacing-lg);
+  background-color: var(--color-ivory);
+  border-bottom: 1px solid rgba(74, 23, 28, 0.08);
+}
+
+.brand-story-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.brand-story-pretitle {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-antique-gold);
+  margin-bottom: 0.5rem;
+}
+
+.brand-story-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  color: var(--color-burgundy);
+  margin-bottom: 1rem;
+}
+
+.brand-story-tagline-accent {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-style: italic;
+  color: var(--color-antique-gold);
+  margin-bottom: 2rem;
+}
+
+.brand-story-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--color-text-main);
+  text-align: left;
+}
+
+.brand-story-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3.5rem;
+  text-align: center;
+}
+
+.story-pillar-card {
+  padding: 1.75rem 1.25rem;
+  background-color: var(--color-ivory-surface);
+  border: 1px solid var(--color-antique-gold-border);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-normal);
+}
+
+.story-pillar-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.story-pillar-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-blush-pink-light);
+  color: var(--color-burgundy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.story-pillar-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--color-burgundy);
+  margin-bottom: 0.5rem;
+}
+
+.story-pillar-text {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .brand-story-section {
+    padding: 3.5rem var(--spacing-md);
+  }
+  .brand-story-pillars {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}

@@ -1,0 +1,201 @@
+.shop-page {
+  padding-bottom: 5rem;
+  background-color: var(--color-ivory);
+}
+
+.shop-banner {
+  background: linear-gradient(135deg, var(--color-burgundy-deep) 0%, var(--color-burgundy) 100%);
+  color: var(--color-ivory);
+  padding: 3.5rem var(--spacing-lg);
+  text-align: center;
+  border-bottom: 2px solid var(--color-antique-gold);
+}
+
+.shop-banner-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+  color: var(--color-ivory);
+  margin-bottom: 0.5rem;
+}
+
+.shop-banner-subtitle {
+  font-size: 1rem;
+  color: var(--color-blush-pink);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.shop-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 2.5rem var(--spacing-lg);
+}
+
+/* Controls Bar */
+.shop-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background-color: var(--color-ivory-surface);
+  border: 1px solid rgba(184, 138, 69, 0.2);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.shop-search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+}
+
+.shop-search-input {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.25rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-antique-gold-border);
+  border-radius: var(--radius-sm);
+  background-color: #FFFFFF;
+  color: var(--color-text-main);
+  outline: none;
+}
+
+.shop-search-input:focus {
+  border-color: var(--color-antique-gold);
+}
+
+.shop-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-antique-gold);
+  pointer-events: none;
+}
+
+.shop-filters-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 0.65rem 2rem 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid var(--color-antique-gold-border);
+  border-radius: var(--radius-sm);
+  background-color: #FFFFFF;
+  color: var(--color-text-main);
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-select:focus {
+  border-color: var(--color-antique-gold);
+}
+
+/* Category Pills Bar */
+.shop-category-pills {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.75rem;
+  scrollbar-width: thin;
+}
+
+.cat-pill {
+  white-space: nowrap;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background-color: var(--color-ivory-surface);
+  border: 1px solid rgba(74, 23, 28, 0.12);
+  color: var(--color-text-main);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.cat-pill:hover {
+  border-color: var(--color-antique-gold);
+  color: var(--color-burgundy);
+}
+
+.cat-pill.active {
+  background-color: var(--color-burgundy);
+  color: var(--color-ivory);
+  border-color: var(--color-burgundy);
+}
+
+/* Active Filter Summary */
+.active-filters-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.clear-filters-btn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-burgundy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Empty State */
+.shop-empty-state {
+  text-align: center;
+  padding: 4.5rem 1.5rem;
+  background-color: var(--color-ivory-surface);
+  border: 1px dashed var(--color-antique-gold-border);
+  border-radius: var(--radius-md);
+  margin: 2rem 0;
+}
+
+.shop-empty-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--color-blush-pink-light);
+  color: var(--color-burgundy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+
+.shop-empty-title {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  color: var(--color-burgundy);
+  margin-bottom: 0.5rem;
+}
+
+.shop-empty-text {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  max-width: 420px;
+  margin: 0 auto 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .shop-controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
